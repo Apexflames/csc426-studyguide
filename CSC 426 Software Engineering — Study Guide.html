@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CSC 426 — Software Engineering Study Guide</title>
+<style>
+:root{
+  --bg:#fbfaf7; --panel:#ffffff; --ink:#1c1a17; --ink-soft:#5a5650; --line:#e4e0d8;
+  --accent:#8a3324; --accent-soft:#f4e6df; --source:#eef2ea; --source-line:#9db38a;
+  --plain:#eef1f5; --plain-line:#7d93b2; --code:#f3f1eb; --focus:#8a3324;
+}
+:root:not([data-theme="light"]) {}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130f; --panel:#1c1a15; --ink:#efece4; --ink-soft:#b3ada0; --line:#332e26;
+    --accent:#e08a6f; --accent-soft:#2b211a; --source:#1c2419; --source-line:#5f7a4c;
+    --plain:#1a2028; --plain-line:#4c6285; --code:#211f19;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130f; --panel:#1c1a15; --ink:#efece4; --ink-soft:#b3ada0; --line:#332e26;
+  --accent:#e08a6f; --accent-soft:#2b211a; --source:#1c2419; --source-line:#5f7a4c;
+  --plain:#1a2028; --plain-line:#4c6285; --code:#211f19;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  line-height:1.55; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+h1,h2,h3,h4{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-weight:700; letter-spacing:-.01em}
+a{color:var(--accent)}
+header{
+  position:sticky; top:0; z-index:20; background:var(--bg); border-bottom:1px solid var(--line);
+  padding:env(safe-area-inset-top,0px) 0 0 0;
+}
+.hbar{display:flex; align-items:center; gap:10px; padding:10px 16px; max-width:1100px; margin:0 auto; flex-wrap:wrap}
+.hbar .title{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-weight:800; font-size:15px; margin-right:auto; white-space:nowrap}
+.hbar .title small{display:block; font-weight:400; font-size:11px; color:var(--ink-soft)}
+#search{
+  flex:1 1 180px; min-width:120px; max-width:320px; padding:7px 10px; border-radius:7px;
+  border:1px solid var(--line); background:var(--panel); color:var(--ink); font-size:14px; font-family:inherit;
+}
+#search:focus{outline:2px solid var(--focus); outline-offset:1px}
+button.tbtn{
+  border:1px solid var(--line); background:var(--panel); color:var(--ink); border-radius:7px;
+  padding:7px 10px; font-size:13px; cursor:pointer; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button.tbtn:focus-visible{outline:2px solid var(--focus)}
+nav.toc{display:flex; gap:6px; overflow-x:auto; padding:0 16px 10px; max-width:1100px; margin:0 auto; -webkit-overflow-scrolling:touch}
+nav.toc a{
+  white-space:nowrap; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:12.5px;
+  text-decoration:none; color:var(--ink-soft); border:1px solid var(--line); padding:5px 10px; border-radius:999px;
+}
+nav.toc a:hover, nav.toc a:focus-visible{color:var(--accent); border-color:var(--accent)}
+main{max-width:760px; margin:0 auto; padding:22px 16px 80px}
+.hidden{display:none !important}
+.topic{border-top:3px solid var(--accent); padding-top:6px; margin-top:52px; scroll-margin-top:70px}
+.topic:first-child{margin-top:20px}
+.topic h2{font-size:23px; margin:4px 0 2px}
+.topic .kicker{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700}
+h3.sub{font-size:16.5px; margin:30px 0 8px; padding-bottom:5px; border-bottom:1px solid var(--line); scroll-margin-top:70px}
+h4.term{font-size:15px; margin:18px 0 4px}
+p{margin:8px 0}
+ul,ol{margin:8px 0; padding-left:22px}
+li{margin:3px 0}
+.block{border-left:3px solid var(--line); background:var(--panel); padding:10px 14px; border-radius:0 6px 6px 0; margin:10px 0}
+.source{border-left-color:var(--source-line); background:var(--source)}
+.plain{border-left-color:var(--plain-line); background:var(--plain)}
+.label{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:10.5px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.07em; display:block; margin-bottom:4px;
+}
+.source .label{color:var(--source-line)}
+.plain .label{color:var(--plain-line)}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0; display:block; overflow-x:auto; white-space:nowrap}
+table thead{display:table-header-group}
+table tbody{display:table-row-group}
+table, tr{display:table; width:100%}
+th,td{border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top; white-space:normal}
+th{background:var(--code); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:12.5px}
+.revision{background:var(--code); border:1px dashed var(--line); border-radius:8px; padding:12px 16px; margin:14px 0}
+.revision .label{color:var(--accent)}
+details.qa{border:1px solid var(--line); border-radius:8px; margin:8px 0; background:var(--panel)}
+details.qa > summary{
+  padding:11px 14px; cursor:pointer; font-weight:600; font-size:14.5px; list-style:none; display:flex; gap:8px; align-items:baseline;
+}
+details.qa > summary::-webkit-details-marker{display:none}
+details.qa > summary::before{content:"▸"; color:var(--accent); flex:0 0 auto; transition:transform .15s}
+details.qa[open] > summary::before{transform:rotate(90deg)}
+details.qa .ans{padding:0 14px 14px; font-size:14.5px}
+.tag{
+  display:inline-block; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:10px; font-weight:700;
+  padding:1px 7px; border-radius:999px; margin-right:6px; vertical-align:middle;
+}
+.tag.likely{background:var(--accent-soft); color:var(--accent)}
+.ref{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:12px; color:var(--ink-soft); margin-top:8px}
+.ref a{color:var(--ink-soft); text-decoration:underline}
+.note{font-size:12.5px; color:var(--ink-soft); margin:6px 0}
+.bank{font-size:14px}
+.bank h4{margin:20px 0 6px; font-size:14.5px}
+.bank ol{padding-left:20px}
+.bank li{margin:4px 0}
+mark{background:var(--accent-soft); color:var(--ink); border-radius:3px; padding:0 2px}
+footer{max-width:760px; margin:0 auto; padding:20px 16px 50px; font-size:12px; color:var(--ink-soft); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+#toTop{position:fixed; bottom:calc(18px + env(safe-area-inset-bottom,0px)); right:18px; border:1px solid var(--line); background:var(--panel); color:var(--ink); border-radius:50%; width:40px; height:40px; cursor:pointer; display:none; font-size:16px}
+#toTop.show{display:block}
+@media (max-width:520px){ .hbar .title{font-size:13px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="title">CSC 426 Study Guide<small>Software Engineering — Dr O. O. Ajayi</small></div>
+    <input id="search" type="text" placeholder="Search definitions, terms, questions…" aria-label="Search study guide">
+    <button class="tbtn" id="themeBtn" aria-label="Toggle dark mode">🌓 Theme</button>
+  </div>
+  <nav class="toc" aria-label="Topic navigation">
+    <a href="#t1">1. Intro to SE</a>
+    <a href="#t2">2. Elicitation</a>
+    <a href="#t3">3. Requirement Analysis</a>
+    <a href="#t4">4. Feasibility Study</a>
+    <a href="#t5">5. Dev. Models &amp; SDLC</a>
+    <a href="#bank">Exam Bank</a>
+  </nav>
+</header>
+
+<main id="content">
+
+<p class="note">Content is drawn from your CSC 426 lecture notes (transcribed notebook, May–June 2026) and the three lecture slide decks on Elicitation, Requirement Analysis, and Feasibility Study. Boxes marked <strong>Source Material</strong> preserve the lecturer's own wording; <strong>Plain English</strong> boxes are added explanations, not lecturer content.</p>
+
+<!-- ================= TOPIC 1 ================= -->
+<section class="topic" id="t1">
+<span class="kicker">Topic 1</span>
+<h2>Introduction to Software Engineering</h2>
+
+<h3 class="sub" id="t1-def">What is Software Engineering?</h3>
+<div class="block source">
+<span class="label">Source Material — Unified Definition</span>
+Software Engineering is a field that deals with analysing, developing, testing, deploying, maintaining and management of high quality software.
+</div>
+<div class="block plain">
+<span class="label">Plain English</span>
+It's the discipline of building software properly — not just writing code, but planning it, testing it, shipping it, and keeping it working, the way a civil engineer plans a bridge rather than just stacking bricks.
+</div>
+
+<h4 class="term" id="t1-pfleeger">Pfleeger's Definition (1987) — the S.O.F.T.W.A.R.E. qualities</h4>
+<div class="block source">
+<span class="label">Source Material</span>
+Software engineering is the strategy for producing quality software:
+<ul>
+<li><strong>S</strong>calability</li><li><strong>O</strong>perability</li><li><strong>F</strong>lexibility</li>
+<li><strong>T</strong>estability</li><li><strong>W</strong>arranty</li>
+<li><strong>A</strong>vailability (up-time high, drop-time low)</li>
+<li><strong>R</strong>euseability</li><li><strong>E</strong>xtensibility</li>
+</ul>
+</div>
+
+<h4 class="term">Philips (2007) and the IEEE definition</h4>
+<div class="block source">
+<span class="label">Source Material</span>
+Philips defined SE as a method of producing good and large software, complimenting Pfleeger by stressing quality software. IEEE (an extension of Pfleeger) defines it as a field of engineering that deals with a systematic, disciplined and technical approach to developing and deploying quality software.
+</div>
+
+<h3 class="sub">Why Software Engineering?</h3>
+<ul>
+<li>Teaches the "engineering of clean code" — a coding methodology</li>
+<li>Teaches software architecture principles</li>
+<li>Teaches how to measure software quality</li>
+<li>Covers software security</li>
+<li>Gives knowledge of version control</li>
+</ul>
+<p><em>Areas of Software Engineering:</em> Programming Engineering, Mobile Engineering, Cybersecurity Engineering, Machine Engineering, Quality Assurance Engineering. (Programming is individual coding; software engineering is the architecture around it.)</p>
+
+<h3 class="sub" id="t1-history">Birth of Software Engineering — the Software Crisis (1968)</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+Software Engineering was born in 1968 after a NATO meeting in Germany, called because of concerned issues in the software industry in the late 1950s–early 1960s. The problems identified were called the <strong>Software Crisis</strong>:
+<ul>
+<li><strong>Software Cost</strong> — no uniformity, no organisation controlling cost</li>
+<li><strong>Software Delivery Time</strong> — market deadlines were missed</li>
+<li><strong>Software Failure</strong></li>
+<li><strong>Software Development Model</strong> — only Waterfall existed, causing delay/failure</li>
+<li><strong>Software Deployment Platform</strong> — limited to one platform</li>
+<li><strong>Software Maintenance</strong> — no principled agreement backing it</li>
+</ul>
+The meeting concluded that Software Engineering should be established as a field/domain under which all practitioners should sit.
+</div>
+<div class="block plain">
+<span class="label">Plain English</span>
+Think of it like early Nigerian road construction before any building code existed — everyone built differently, some roads collapsed, nobody agreed on standards. NATO's 1968 meeting was the moment the industry said "we need standards," the same way a professional body sets construction codes.
+</div>
+
+<h3 class="sub">What Has Changed Since Software Engineering Began</h3>
+<ul>
+<li>Late delivery → time-to-market delivery</li>
+<li>Slow, rigid models → young, smart, Agile models</li>
+<li>Sole-proprietary software → open-source software</li>
+<li>In-house development → out-sourced development</li>
+<li>Crowded junk servers → Cloud Computing</li>
+</ul>
+
+<h3 class="sub" id="t1-types">Types of Software</h3>
+<p><strong>System Software</strong> and <strong>Application Software</strong>. Application software further divides into:</p>
+<table>
+<thead><tr><th>Type</th><th>Definition</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>Generic (Ubiquitous)</td><td>Mass-market, general use</td><td>Office Suite, Corel Suite, Photoshop</td></tr>
+<tr><td>Bespoke</td><td>Developed for a particular client's peculiar use</td><td>AVERS, AVARM</td></tr>
+<tr><td>COTS</td><td>Built for a particular domain/profession but not mass-produced</td><td>E-View, Peachtree</td></tr>
+<tr><td>Embedded</td><td>Inserted into a hardware machine</td><td>ATM, vehicular software</td></tr>
+<tr><td>Web-based</td><td>Accessed via browser</td><td>Gmail</td></tr>
+<tr><td>Mobile</td><td>Runs on a mobile phone</td><td>WhatsApp</td></tr>
+</tbody>
+</table>
+
+<h3 class="sub" id="t1-swvsp">Software vs Software Product</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+Software = a program that dictates/directs how a computer works — it does not need support and documentation. A Software Product is a package with marketable artefacts: it needs licensing, documentation, pricing, delivery, maintenance and versioning. A software product is a software system developed, debugged and delivered to clients with adequate documentation guiding installation and usage.
+</div>
+
+<h3 class="sub" id="t1-sdf">The Software Development Flow (SDF) and its Actors</h3>
+<p>Flow: <em>Requirement Definition &amp; Analysis → Software &amp; System Design → Program Design → Program Implementation → Unit Testing → Integration Testing → System Testing → System Delivery → System Maintenance</em> (each stage feeds back to the one before it for problem-testing/documentation/delivery).</p>
+<table>
+<thead><tr><th>Actor</th><th>Responsibility</th></tr></thead>
+<tbody>
+<tr><td>System Analyst</td><td>Analysis; specifies the nature of the required software, with input/support recommendations</td></tr>
+<tr><td>System Designer</td><td>Graphics/logo, suitable hardware configuration, recommends programming language</td></tr>
+<tr><td>System Programmer</td><td>Program design and coding; has a part in unit testing</td></tr>
+<tr><td>System Tester</td><td>Unit, integration and system testing</td></tr>
+<tr><td>System Trainer</td><td>System delivery and maintenance</td></tr>
+</tbody>
+</table>
+<p class="note">Note from the notebook: when there's a code problem, trace from the last stage back to the beginning.</p>
+
+<div class="revision">
+<span class="label">Quick Revision</span>
+SE = analysing + developing + testing + deploying + maintaining quality software. Born 1968 after NATO's software-crisis meeting. Software ≠ Software Product (documentation/licensing is the difference). Six actors run the SDF: Analyst, Designer, Programmer, Tester, Trainer (+ SDF stages themselves).
+</div>
+
+<h3 class="sub">Likely Exam Questions <span class="tag likely">Likely</span></h3>
+
+<details class="qa">
+<summary>Give the Pfleeger (1987) definition of Software Engineering and list its eight qualities.</summary>
+<div class="ans">
+<strong>Answer:</strong> Pfleeger defined SE as the strategy for producing quality software, captured in the mnemonic S.O.F.T.W.A.R.E.: Scalability, Operability, Flexibility, Testability, Warranty, Availability, Reuseability, Extensibility.
+<div class="ref">Study Guide Reference: <a href="#t1-pfleeger">Topic 1 → Pfleeger's Definition</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Explain why Software Engineering was established as a field in 1968.</summary>
+<div class="ans">
+<strong>Answer:</strong> After NATO's 1968 meeting in Germany, stakeholders identified a "software crisis": uncontrolled software cost, missed delivery times, software failure, no standard development model beyond Waterfall, single-platform deployment limits, and no principled approach to maintenance. The meeting concluded SE should be established as its own field/domain covering all these problems.
+<div class="ref">Study Guide Reference: <a href="#t1-history">Topic 1 → Birth of Software Engineering</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Differentiate between Software and a Software Product.</summary>
+<div class="ans">
+<strong>Answer:</strong> Software is simply a program directing how a computer works, with no requirement for support or documentation. A Software Product is a marketable package: developed, debugged and delivered with adequate documentation, and requiring licensing, pricing, delivery, maintenance and versioning.
+<div class="ref">Study Guide Reference: <a href="#t1-swvsp">Topic 1 → Software vs Software Product</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>List the six types of Application Software with one example each.</summary>
+<div class="ans">
+<strong>Answer:</strong> Generic/Ubiquitous (Office Suite), Bespoke (AVERS), COTS (Peachtree), Embedded (ATM), Web-based (Gmail), Mobile (WhatsApp).
+<div class="ref">Study Guide Reference: <a href="#t1-types">Topic 1 → Types of Software</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Outline the five actors of the Software Development Team and their responsibilities.</summary>
+<div class="ans">
+<strong>Answer:</strong> System Analyst (analysis and specification), System Designer (graphics, hardware configuration, language recommendation), System Programmer (program design/coding, unit testing), System Tester (unit, integration, system testing), System Trainer (delivery and maintenance).
+<div class="ref">Study Guide Reference: <a href="#t1-sdf">Topic 1 → The Software Development Flow</a></div>
+</div>
+</details>
+</section>
+
+<!-- ================= TOPIC 2 ================= -->
+<section class="topic" id="t2">
+<span class="kicker">Topic 2</span>
+<h2>Requirement Elicitation</h2>
+
+<h3 class="sub" id="t2-def">Definition</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+Requirement Elicitation is the process of identifying, discovering, extracting, clarifying, and understanding stakeholders' needs and expectations for a proposed software system — helping analysts understand business problems before proposing solutions. Requirements themselves don't solve problems, but they describe what the solution must do. They are first expressed in natural language, structured forms, sketches, and informal models before being refined into formal specifications.
+</div>
+<div class="block plain">
+<span class="label">Plain English</span>
+Before you can build anything, you have to find out what people actually need — the way a tailor takes your measurements before cutting cloth, not after.
+</div>
+
+<h3 class="sub" id="t2-paths">Two Pathways to Elicitation</h3>
+<ul>
+<li><strong>Problem Analysis</strong> — identifying the problem, understanding its nature, and recognising constraints that may limit the solution.</li>
+<li><strong>Information Gathering (Fact-Finding)</strong> — the formal process of using research, interviews, questionnaires and other techniques to collect information about problems and requirements.</li>
+</ul>
+
+<h3 class="sub" id="t2-ishikawa">The Ishikawa (Fishbone) Diagram</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+A graphical tool to identify, explore and represent problems, their causes and effects. Also called the Cause-and-Effect Diagram, named after Kaoru Ishikawa (Kawasaki, Japan), a Total Quality Management pioneer.
+<ul>
+<li><strong>Fish Head</strong> — name of the problem</li>
+<li><strong>Fish Bones</strong> — causes of the problem (usually 3–6)</li>
+<li><strong>Body</strong> — effects</li>
+</ul>
+The notebook adds: your diagram must use an <strong>even</strong> number of causes (4, 6, 8…), never odd.
+</div>
+<p><em>Other modern elicitation techniques (slides):</em> JAD (Joint Application Development) Sessions, Workshops, Brainstorming, Focus Groups, Prototyping, Storyboarding, User Stories, Scenarios.</p>
+
+<h3 class="sub" id="t2-methods">The Fact-Finding / Elicitation Methods</h3>
+<div class="block source">
+<span class="label">Source Material — combining notebook + slides</span>
+The five commonly used fact-finding techniques: <strong>sampling of existing documents, site visitation, observation, questionnaire, and interview.</strong>
+</div>
+
+<h4 class="term">1. Sampling of Existing Documents</h4>
+<p>Two ways: manual documents (organogram, medical files, OPD/IPD design) and computerised system documents (data dictionary, I/O interfaces, Data Flow Diagrams). Slides add key documents to review: organisational chart/mission statement/strategic plan, problem-area reports, policy/procedure/transaction manuals, interoffice memoranda and performance records, and — where a system exists — database samples, flowcharts, and design/program/operation documentation.</p>
+
+<h4 class="term">2. Site Visitation</h4>
+<p>Embraces experience from similar past problems, carried out three ways: Organisational visit (interact directly with the institution), Web visit (explore online resources of related organisations), Book visit / Literature Review (retrieve solutions from journals and reference books).</p>
+
+<h4 class="term" id="t2-obs">3. Observation ("Eye Witness Technique")</h4>
+<p>The analyst enters the working environment and watches staff perform duties to capture system flow. Steps: take permission from the organisation, observe diligently (not suspiciously), take note of observations.</p>
+<div class="block plain"><span class="label">Plain English</span>Advantages: reliable data, relatively inexpensive, can correct descriptions from other techniques. Disadvantages: people may disguise their behaviour when watched, scheduling can be inconvenient, and it can interrupt work. Guideline: define the W5H (Why, Who, What, Where, When, How), get permission, inform those observed, don't disturb work, review notes with them afterward.</div>
+
+<h4 class="term" id="t2-quest">4. Questionnaire</h4>
+<p>Pre-prepared written questions administered to respondents.</p>
+<table>
+<thead><tr><th>Type</th><th>Nature</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>Open-ended (Free Format)</td><td>Great latitude to respondent; responses non-uniform, poor for descriptive statistics</td><td>"What is the cause of kidnapping in Nigeria?"</td></tr>
+<tr><td>Close-ended (Fixed Format)</td><td>Predefined responses to pick from</td><td>Agree / Disagree / Neutral</td></tr>
+</tbody>
+</table>
+<p>Unstructured (general goal, no specific questions) vs Structured (specific set of prepared questions) is another split noted on the slides. Advantages: convenient for large volumes of information, more reliable than observation, quick, easily tabulated. Disadvantages: inflexible, no chance to clarify incomplete answers, hard to design good standard questions.</p>
+
+<h4 class="term" id="t2-int">5. Interview</h4>
+<div class="block source">
+<span class="label">Source Material</span>
+An oral method of gathering data, involving pre-prepared questions for the respondent to respond to. Steps: book an appointment; prepare yourself psychologically (set alarm, plan questions); dress corporately; reintroduce yourself and your mission; explain your real mission; ask your questions; take permission for recording; observe body language; ask questions relating to their reaction; appreciate, exit, and replay the recording for further analysis.
+</div>
+<p>Advantages: respondents answer freely, allows feedback, questions can be tailored. Disadvantages: time-consuming, location/distance challenges, success depends on the interviewer's interpersonal skill.</p>
+
+<h3 class="sub" id="t2-deliverables">Deliverables &amp; Challenges of Elicitation</h3>
+<table>
+<thead><tr><th>Deliverables</th><th>Challenges</th></tr></thead>
+<tbody>
+<tr><td>List of stakeholders</td><td>Incomplete or hidden requirements</td></tr>
+<tr><td>Business, user, functional and non-functional requirements</td><td>Conflicting stakeholder opinions</td></tr>
+<tr><td>Initial use cases and user stories</td><td>Communication barriers</td></tr>
+<tr><td>Business rules and constraints</td><td>Frequent requirement changes; lack of stakeholder participation; unrealistic expectations</td></tr>
+</tbody>
+</table>
+
+<div class="revision">
+<span class="label">Quick Revision</span>
+Elicitation = discovering stakeholder needs via Problem Analysis (incl. Ishikawa, even number of bones) + Information Gathering (sampling docs, site visitation, observation, questionnaire, interview). Requirements don't solve problems — they describe what the solution must do.
+</div>
+
+<h3 class="sub">Likely Exam Questions <span class="tag likely">Likely</span></h3>
+
+<details class="qa">
+<summary>Define Requirement Elicitation and explain why it matters.</summary>
+<div class="ans">
+<strong>Answer:</strong> It is the process of identifying, discovering, extracting, clarifying and understanding stakeholders' needs and expectations for a proposed system. It matters because analysts must understand business problems before proposing solutions — requirements don't solve problems themselves, but describe what the solution must do.
+<div class="ref">Study Guide Reference: <a href="#t2-def">Topic 2 → Definition</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Using an Ishikawa diagram, represent the problem of "lateness in release of results" and state the rule governing the number of causes used.</summary>
+<div class="ans">
+<strong>Answer:</strong> Draw the Fish Head as "Lateness in release of results," then branch Fish Bones for each actor/cause category — e.g. Lecturer (late working, laziness), Student (late/wrong registration), ICTAC (software issues, staff), Akungba Agent — with the Body showing resulting effects. The number of bones/causes used must be even (4, 6, 8…), never odd.
+<div class="ref">Study Guide Reference: <a href="#t2-ishikawa">Topic 2 → The Ishikawa Diagram</a></div>
+<div class="ref"><strong>Related Past Question:</strong> notebook exam prompt — "Represent the problems of lateness in release of result using Ishikawa diagram."</div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Differentiate between open-ended and close-ended questionnaires.</summary>
+<div class="ans">
+<strong>Answer:</strong> An open-ended (free-format) questionnaire gives the respondent great latitude to answer in their own words, but responses are non-uniform and hard to analyse statistically (e.g. "What is the cause of kidnapping in Nigeria?"). A close-ended (fixed-format) questionnaire gives predefined responses to choose from (e.g. Agree/Disagree/Neutral), which are easier to tabulate but less flexible.
+<div class="ref">Study Guide Reference: <a href="#t2-quest">Topic 2 → Questionnaire</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>List the steps involved in carrying out a good interview for requirement elicitation.</summary>
+<div class="ans">
+<strong>Answer:</strong> Book an appointment; prepare psychologically (plan questions, set an alarm); dress corporately; reintroduce yourself and your mission; explain the real purpose of the visit; ask the prepared questions; take permission to record; observe body language; probe reactions further; appreciate the respondent, exit, and replay the recording for analysis.
+<div class="ref">Study Guide Reference: <a href="#t2-int">Topic 2 → Interview</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>State two advantages and two disadvantages of the observation technique.</summary>
+<div class="ans">
+<strong>Answer:</strong> Advantages — reliable data; relatively inexpensive; can correct descriptions gathered from other techniques. Disadvantages — people may disguise their behaviour while being watched; scheduling inconvenience; potential interruption of work.
+<div class="ref">Study Guide Reference: <a href="#t2-obs">Topic 2 → Observation</a></div>
+</div>
+</details>
+</section>
+
+<!-- ================= TOPIC 3 ================= -->
+<section class="topic" id="t3">
+<span class="kicker">Topic 3</span>
+<h2>Requirement Analysis</h2>
+
+<h3 class="sub" id="t3-def">Definition</h3>
+<div class="block source">
+<span class="label">Source Material — combining notebook + slides</span>
+Requirement analysis is the process of analysing, refining and restructuring raw requirements — thoroughly studying the application domain of the system to be developed, understanding the problem space, identifying stakeholder needs, and translating them into precise, actionable specifications developers can build against. It is the next major step after the feasibility study and elicitation.
+</div>
+
+<h3 class="sub" id="t3-dipm">The DIPM Process</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+<ul>
+<li><strong>D</strong> — Detecting inconsistency in the raw requirement</li>
+<li><strong>I</strong> — Identify missing or ambiguous requirements</li>
+<li><strong>P</strong> — Prioritize requirements</li>
+<li><strong>M</strong> — Model the requirement (sketch/draw using draw.io, diagrams.net, app.diagram)</li>
+</ul>
+</div>
+
+<h3 class="sub" id="t3-types">Types of Requirement Analysis</h3>
+<p>Functional Requirement, Non-functional Requirement, Domain Requirement.</p>
+
+<h4 class="term" id="t3-func">Functional Requirements</h4>
+<div class="block source">
+<span class="label">Source Material</span>
+Requirements that stipulate how a software should function — the expected operation of a software. The slides describe them as statements covering: <strong>Services Provided</strong> (core functions/operations offered), <strong>System Reactions</strong> (how the system responds to inputs/events), and <strong>Output Generation</strong> (results/reports/data produced).
+</div>
+<p><strong>Real-world example (AVERS System):</strong> users must specify their TYPE — Staff or Student — alongside username and password at login, a unique functional requirement enabling flexible filtering of access rights and data visibility per user category.</p>
+<p>Functional requirements differ from <em>general</em> system requirements: general requirements are broad and apply to many systems, while functional requirements are specific and unique to the particular system's domain.</p>
+
+<h4 class="term" id="t3-nonfunc">Non-Functional Requirements</h4>
+<div class="block source">
+<span class="label">Source Material</span>
+Parameters that ensure the smooth operation of a software — called "constraints" because they indirectly but significantly influence implementation and design. Non-functional requirement types:
+<ul>
+<li><strong>Product Requirement</strong> — standard operational requirement of the product: Performance (should beat optimal level), Security (software must be safe), Usability (must be usable), Reliability (fault tolerance expected).</li>
+<li><strong>Organization Requirement</strong> — Environmental (stakeholders dictate deployment environment), Development (stakeholders choose programming language), Operational (organisation can request partitioning of operation, e.g. user-level privilege).</li>
+<li><strong>External Requirement</strong> — Regulatory (policies from a higher controlling body), Legislative (constrains the software's jurisdiction), Ethical (rules governing group operation of the software).</li>
+</ul>
+</div>
+<p class="note">Notebook distinction: Non-functional requirement relates to the system/software itself; Domain requirement talks about expertise and constraint from a specific field.</p>
+
+<h4 class="term" id="t3-domain">Domain Requirements</h4>
+<div class="block source">
+<span class="label">Source Material</span>
+The constraint usually set by experts in a domain regarding the functionality of a software.
+</div>
+
+<div class="revision">
+<span class="label">Quick Revision</span>
+Requirement Analysis follows Elicitation and Feasibility Study, and runs on DIPM (Detect, Identify, Prioritize, Model). Functional = what the system does (services, reactions, output); Non-functional = how well it does it (Product/Organization/External); Domain = expert-set constraints from the field.
+</div>
+
+<h3 class="sub">Likely Exam Questions <span class="tag likely">Likely</span></h3>
+
+<details class="qa">
+<summary>Explain the DIPM process of requirement analysis.</summary>
+<div class="ans">
+<strong>Answer:</strong> D — Detect inconsistency in the raw requirement; I — Identify missing or ambiguous requirements; P — Prioritize the requirements; M — Model the requirement by sketching/drawing it (e.g. with draw.io or diagrams.net).
+<div class="ref">Study Guide Reference: <a href="#t3-dipm">Topic 3 → The DIPM Process</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Distinguish between Functional and Non-Functional Requirements, with an example of each.</summary>
+<div class="ans">
+<strong>Answer:</strong> Functional requirements define what the system should do — its services, reactions to input, and outputs (e.g. the AVERS login requiring a user TYPE field). Non-functional requirements define how well the system behaves — constraints such as performance, security, usability and reliability (e.g. a system must respond within 2 seconds).
+<div class="ref">Study Guide Reference: <a href="#t3-func">Topic 3 → Functional Requirements</a>, <a href="#t3-nonfunc">Non-Functional Requirements</a></div>
+<div class="ref"><strong>This answer combines material from the Requirement Analysis slides and lecture notes.</strong></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>List and explain the three types of Non-Functional Requirements.</summary>
+<div class="ans">
+<strong>Answer:</strong> Product Requirement (performance, security, usability, reliability of the product itself), Organization Requirement (environmental, development and operational constraints set by the organisation), External Requirement (regulatory, legislative and ethical constraints imposed by outside bodies).
+<div class="ref">Study Guide Reference: <a href="#t3-nonfunc">Topic 3 → Non-Functional Requirements</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>What is a Domain Requirement, and how does it differ from a Non-Functional Requirement?</summary>
+<div class="ans">
+<strong>Answer:</strong> A Domain Requirement is a constraint set by experts in a particular field regarding the software's functionality. Unlike a Non-Functional Requirement — which concerns the system/software's own operational quality — a Domain Requirement concerns expertise and constraints imposed from outside the system by the domain itself.
+<div class="ref">Study Guide Reference: <a href="#t3-domain">Topic 3 → Domain Requirements</a></div>
+</div>
+</details>
+</section>
+
+<!-- ================= TOPIC 4 ================= -->
+<section class="topic" id="t4">
+<span class="kicker">Topic 4</span>
+<h2>Feasibility Study</h2>
+
+<h3 class="sub" id="t4-def">Definition</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+A feasibility study is a systematic evaluation of a proposed software project to determine whether it is technically possible, economically worthwhile, operationally acceptable, legally compliant, and capable of being completed within the available time. It is one of the first activities in the Planning phase of the SDLC. Core question: <em>"Should we build this system?"</em> If the answer is No, the project should not proceed regardless of how attractive the idea seems.
+</div>
+
+<h3 class="sub" id="t4-obj">Objectives of a Feasibility Study</h3>
+<ul>
+<li>Determine whether the project is worth pursuing before committing resources</li>
+<li>Identify potential risks before development begins</li>
+<li>Estimate project cost and expected benefits</li>
+<li>Determine resource requirements (personnel, technology, infrastructure)</li>
+<li>Assess organisational readiness to adopt/support the system</li>
+<li>Support management decision-making with structured, evidence-based analysis</li>
+</ul>
+
+<h3 class="sub" id="t4-telos">The TELOS Framework</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+The most widely accepted feasibility framework, with five core dimensions:
+</div>
+<table>
+<thead><tr><th>Dimension</th><th>Key Question</th></tr></thead>
+<tbody>
+<tr><td><strong>T</strong>echnical</td><td>Can the system be built with available technology and expertise? Do we have qualified personnel?</td></tr>
+<tr><td><strong>E</strong>conomic</td><td>Is the project financially worthwhile? (via Cost-Benefit Analysis)</td></tr>
+<tr><td><strong>L</strong>egal</td><td>Does the system comply with applicable laws and regulations?</td></tr>
+<tr><td><strong>O</strong>perational</td><td>Will users accept and use the system successfully?</td></tr>
+<tr><td><strong>S</strong>chedule</td><td>Can the project be delivered within the required timeline?</td></tr>
+</tbody>
+</table>
+<p>Many organisations also assess <strong>Organizational Feasibility</strong> (alignment with organisational goals/policy — e.g. University of Ibadan's e-Campus), <strong>Social Feasibility</strong> (impact on users/society — jobs, public acceptance) and <strong>Environmental Feasibility</strong> (energy consumption, e-waste, carbon footprint).</p>
+<p class="note">The notebook's version of this list (Technical, Economic, Operational, Scheduling, Legal) matches TELOS but in a different order — both name the same five core dimensions.</p>
+
+<h3 class="sub" id="t4-vv">Verification vs Validation (from the SDLC notes)</h3>
+<table>
+<thead><tr><th></th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>Verification</td><td>Ensuring you are building the software rightly (process check)</td></tr>
+<tr><td>Validation</td><td>Confirming you have built the right software (outcome check)</td></tr>
+</tbody>
+</table>
+
+<h3 class="sub" id="t4-process">Feasibility Study Process &amp; Report</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+Process: identify the business problem and proposed solution → collect relevant information → assess all five core dimensions (technical, economic, operational, legal, schedule) → prepare a feasibility report → present to management for a go/no-go decision.
+<br><br>
+<strong>Feasibility Report contents:</strong> Executive Summary, Background of the Project, Problem Statement, Proposed Solution, Technical/Economic/Operational/Legal/Schedule Feasibility, Risks, Recommendations, Conclusion.
+</div>
+<table>
+<thead><tr><th>Advantages</th><th>Limitations</th></tr></thead>
+<tbody>
+<tr><td>Supports informed decision-making; reduces project failure; identifies risks early; saves time and money; improves planning; helps secure management approval; ensures better resource allocation</td><td>Requires time and cost to conduct; depends on the quality of available information; future conditions may change; incorrect assumptions may mislead conclusions</td></tr>
+</tbody>
+</table>
+
+<div class="revision">
+<span class="label">Quick Revision</span>
+Feasibility Study = "should we build this?" — answered via TELOS (Technical, Economic, Legal, Operational, Schedule), sometimes plus Organizational/Social/Environmental. Process: define problem → gather info → assess 5 dimensions → report → go/no-go decision.
+</div>
+
+<h3 class="sub">Likely Exam Questions <span class="tag likely">Likely</span></h3>
+
+<details class="qa">
+<summary>Define a Feasibility Study and state the core question it answers.</summary>
+<div class="ans">
+<strong>Answer:</strong> A feasibility study is a systematic evaluation of a proposed software project to determine whether it is technically possible, economically worthwhile, operationally acceptable, legally compliant, and completable within the available time. It answers the core question: "Should we build this system?"
+<div class="ref">Study Guide Reference: <a href="#t4-def">Topic 4 → Definition</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Explain the TELOS framework, naming each dimension and the question it asks.</summary>
+<div class="ans">
+<strong>Answer:</strong> Technical — can it be built with available technology/expertise? Economic — is it financially worthwhile (cost-benefit)? Legal — does it comply with laws/regulations? Operational — will users accept and use it? Schedule — can it be delivered on time? Some organisations add Organizational, Social and Environmental feasibility.
+<div class="ref">Study Guide Reference: <a href="#t4-telos">Topic 4 → The TELOS Framework</a></div>
+<div class="ref"><strong>Related Past Question:</strong> notebook lists the same five under "Types of Feasibility Studies."</div>
+</div>
+</details>
+
+<details class="qa">
+<summary>A bank plans to introduce a mobile banking application. Identify one issue to consider under Technical, Economic, Operational, Legal, and Schedule feasibility.</summary>
+<div class="ans">
+<strong>Answer (model):</strong> Technical — does the bank have staff and infrastructure skilled in mobile-banking security? Economic — will transaction-fee revenue and cost savings outweigh development and maintenance cost? Operational — will customers, especially less tech-literate ones, adopt and trust the app? Legal — does it comply with CBN data-protection and financial-service regulations? Schedule — can it launch before a competitor's product or a regulatory deadline?
+<div class="ref">Study Guide Reference: <a href="#t4-telos">Topic 4 → The TELOS Framework</a></div>
+<div class="ref"><strong>Related Past Question:</strong> Slide 10 Take-Home Exercise (mobile banking application).</div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Differentiate between Verification and Validation.</summary>
+<div class="ans">
+<strong>Answer:</strong> Verification asks "are we building the software rightly?" — it checks the process against specifications. Validation asks "have we built the right software?" — it checks the finished product against actual user needs.
+<div class="ref">Study Guide Reference: <a href="#t4-vv">Topic 4 → Verification vs Validation</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>List the contents of a typical Feasibility Report, and state two advantages and two limitations of conducting a feasibility study.</summary>
+<div class="ans">
+<strong>Answer:</strong> Report contents: Executive Summary, Background, Problem Statement, Proposed Solution, the five TELOS feasibility sections, Risks, Recommendations, Conclusion. Advantages: reduces project failure; identifies risks early. Limitations: requires time and cost to conduct; depends on the quality of available information.
+<div class="ref">Study Guide Reference: <a href="#t4-process">Topic 4 → Feasibility Study Process &amp; Report</a></div>
+</div>
+</details>
+</section>
+
+<!-- ================= TOPIC 5 ================= -->
+<section class="topic" id="t5">
+<span class="kicker">Topic 5</span>
+<h2>Software Development Process &amp; Models (SDLC)</h2>
+
+<h3 class="sub" id="t5-process">The Four Core Activities</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+Munassan et al. (2010): a software development process is an abstract description of a process defining how software is developed from a logical/strategic perspective. Activities: <strong>Software Specification → Software Development → Software Validation → Software Evolution.</strong> Pressman et al. (2010) frame this as a roadmap: Define → Build → Test → Deploy, carried out through Requirement, Development, Validation, and Operation &amp; Maintenance respectively — involving Users &amp; Developers, Developers, Developers, and Users &amp; Developers again.
+</div>
+
+<h3 class="sub" id="t5-sdlc">SDLC Stages</h3>
+<p>Planning → Requirement Analysis &amp; Definition → Software System Definition → Implementation → Testing → Deployment → Maintenance.</p>
+<div class="block source">
+<span class="label">Source Material</span>
+SDLC is a representation of activities leading to the development of software. SDM (Software Development Model) refers to the acceptable methodology approach to developing software. (SDM ↔ SDLC)
+</div>
+<p><strong>Planning</strong> involves carrying out feasibility studies (see Topic 4).</p>
+
+<h3 class="sub" id="t5-grouping">Grouping the Models by Age</h3>
+<table>
+<thead><tr><th>Era</th><th>Models</th></tr></thead>
+<tbody>
+<tr><td>Traditional (1970s–1990s)</td><td>Waterfall, V-shape</td></tr>
+<tr><td>Evolution (1990s–2000s)</td><td>Evolutionary, Spiral</td></tr>
+<tr><td>2001–2019</td><td>Hybridisation of Agile &amp; Waterfall</td></tr>
+<tr><td>Modern (2020s–now)</td><td>Agile-Scrum, DevOps</td></tr>
+</tbody>
+</table>
+
+<h3 class="sub" id="t5-waterfall">Waterfall Model</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+The oldest model, emphasising deep requirement definition and analysis before any development begins. Two schematic types:
+<ul>
+<li><strong>Classical Waterfall:</strong> Requirement Definition &amp; Specification → Software &amp; System Design → Program Design → Implementation &amp; Unit Testing → Integration &amp; System Testing → Operation &amp; Maintenance</li>
+<li><strong>Pure/Linear Waterfall:</strong> Software Requirement → System Requirement → Architectural Design → Detailed Design → Development &amp; Unit Testing → Integration &amp; System Testing → Deployment &amp; Operation → Maintenance</li>
+</ul>
+</div>
+<table>
+<thead><tr><th>Advantages</th><th>Disadvantages</th><th>Used in</th></tr></thead>
+<tbody>
+<tr><td>Less error-prone; possibility of building robust software</td><td>Costly; time-consuming; rigid</td><td>Financial, Military, Government apps</td></tr>
+</tbody>
+</table>
+
+<h3 class="sub" id="t5-vshape">V-Shape Model</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+An extension of Waterfall that explicitly contains a "Planning" stage. The "V" stands for Verification and Validation — the model's other name. Left arm (Verification/Design): Planning → Requirement → Architectural Design → Detailed Design. Right arm (Validation/Testing): Unit Testing → Integration Testing → System Testing → Maintenance, meeting at Implementation at the base of the V.
+</div>
+<p>Advantages: same as Waterfall. Disadvantage: more time-consuming due to the added planning stage.</p>
+
+<h3 class="sub" id="t5-evo">Evolutionary Model ("Sharp-Sharp" Model)</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+Emphasises fast software development, laying little emphasis on requirement elicitation/analysis and jumping straight to specification and development. Three variants are drawn in the notebook:
+<ul>
+<li><strong>Variant I</strong> — Requirement Specification ⇄ Demo Version ⇄ Development (relies heavily on domain requirement; also called the Incremental Model)</li>
+<li><strong>Variant II</strong> — Requirement Specification ⇄ Demo Version ⇄ Development, cycling toward a "Real Final" version (the Throwaway Prototype Model)</li>
+<li><strong>Variant III</strong> — Software Specification → Software Development → Software Validation → Deployment, producing a 1st Version, then Intermediate Versions, then a Final Version</li>
+</ul>
+<strong>Lecturer's note in the notebook: "If asked any evolutionary model, give me Variant III."</strong>
+</div>
+
+<h3 class="sub" id="t5-spiral">Spiral Model</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+The preferred model when security is the utmost priority; its major strength is risk analysis. Two variants drawn:
+<ul>
+<li><strong>Variant I</strong> — four quadrants around a shrinking spiral: Planning, Risk Analysis, Development, Evaluation ("Next Phase?")</li>
+<li><strong>Variant II</strong> — the same four quadrants, but each ring is labelled with cycle stages: RA (Risk Analysis), PT (Prototype), D (Dev), T (Test), across repeating cycles (T1, T2, T3…)</li>
+</ul>
+</div>
+
+<h3 class="sub" id="t5-agile">Agile Model</h3>
+<div class="block source">
+<span class="label">Source Material</span>
+Combines features of the Evolutionary and Spiral models; its agility makes it the most suitable model for hybridising with Waterfall. Components: <strong>Envision → Engage (Scrum/Sprint) → Release (Initial Version) → Review.</strong>
+<br><br>
+<strong>Lecturer's note:</strong> Differentiate Evolutionary from Agile, and justify which is best. Evolutionary: a single person can execute a project. Agile: it is about the team. Justification given: Agile is fast and depends on time.
+</div>
+
+<div class="revision">
+<span class="label">Quick Revision</span>
+Process: Specification → Development → Validation → Evolution. Roadmap: Define → Build → Test → Deploy. SDLC: Planning → Requirement Analysis → System Definition → Implementation → Testing → Deployment → Maintenance. Five models: Waterfall (rigid, sequential), V-shape (Waterfall + explicit planning + V&amp;V), Evolutionary (fast, Variant III is the lecturer's preferred answer), Spiral (risk-driven, security-first), Agile (team-based, fast, hybridises with Waterfall).
+</div>
+
+<h3 class="sub">Likely Exam Questions <span class="tag likely">Likely</span></h3>
+
+<details class="qa">
+<summary>List, in order, the four activities of the software development process according to Munassan et al. (2010), and Pressman's four-part "roadmap."</summary>
+<div class="ans">
+<strong>Answer:</strong> Munassan et al.: Software Specification → Software Development → Software Validation → Software Evolution. Pressman et al. frame the same idea as a roadmap: Define → Build → Test → Deploy.
+<div class="ref">Study Guide Reference: <a href="#t5-process">Topic 5 → The Four Core Activities</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Draw and explain the Classical Waterfall Model. State two advantages and two disadvantages.</summary>
+<div class="ans">
+<strong>Answer:</strong> Stages: Requirement Definition &amp; Specification → Software &amp; System Design → Program Design → Implementation &amp; Unit Testing → Integration &amp; System Testing → Operation &amp; Maintenance, each feeding back to the previous stage. Advantages: less error-prone, possibility of building robust software. Disadvantages: costly, time-consuming, rigid.
+<div class="ref">Study Guide Reference: <a href="#t5-waterfall">Topic 5 → Waterfall Model</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Explain the V-Shape Model and how it differs from the standard Waterfall Model.</summary>
+<div class="ans">
+<strong>Answer:</strong> The V-Shape Model is an extension of Waterfall, distinguished by an explicit Planning stage and its "V" shape, standing for Verification and Validation. The left arm covers Planning, Requirement, Architectural and Detailed Design (Verification); the right arm covers Unit, Integration and System Testing plus Maintenance (Validation), meeting at Implementation. It shares Waterfall's advantages but is more time-consuming due to the extra planning stage.
+<div class="ref">Study Guide Reference: <a href="#t5-vshape">Topic 5 → V-Shape Model</a></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Describe the Evolutionary Model preferred by the lecturer (Variant III), and explain why the model is called "sharp-sharp."</summary>
+<div class="ans">
+<strong>Answer:</strong> Variant III flows Software Specification → Software Development → Software Validation → Deployment, producing a 1st Version, then Intermediate Version(s), then a Final Version. It is called "sharp-sharp" because it emphasises fast development, giving little attention to requirement elicitation/analysis and jumping straight to specification and development.
+<div class="ref">Study Guide Reference: <a href="#t5-evo">Topic 5 → Evolutionary Model</a></div>
+<div class="ref"><strong>Note:</strong> the lecturer explicitly instructed students to answer with Variant III if asked about the Evolutionary Model.</div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Differentiate between the Evolutionary Model and the Agile Model, and justify which is best.</summary>
+<div class="ans">
+<strong>Answer:</strong> The Evolutionary Model can be executed by a single person, while the Agile Model is built around a team. Agile is justified as the better choice because it is fast and depends on time — its agility also makes it the most suitable model for hybridising with Waterfall.
+<div class="ref">Study Guide Reference: <a href="#t5-agile">Topic 5 → Agile Model</a></div>
+<div class="ref"><strong>This answer combines material from the Evolutionary Model and Agile Model sections.</strong></div>
+</div>
+</details>
+
+<details class="qa">
+<summary>Why is the Spiral Model preferred for security-sensitive projects?</summary>
+<div class="ans">
+<strong>Answer:</strong> The Spiral Model is preferred when security issues are of utmost priority because its major strength is a built-in provision for risk analysis at every cycle (Planning → Risk Analysis → Development → Evaluation), repeated across expanding rings until the project is complete.
+<div class="ref">Study Guide Reference: <a href="#t5-spiral">Topic 5 → Spiral Model</a></div>
+</div>
+</details>
+</section>
+
+<!-- ================= EXAM BANK ================= -->
+<section class="topic" id="bank">
+<span class="kicker">Consolidated</span>
+<h2>Final Exam Question Bank</h2>
+<p class="note">Every question below already appears with its full answer under its topic. This bank groups them for last-minute revision — tap a question to jump straight to it.</p>
+
+<div class="bank">
+<h4>Topic 1 — Introduction to Software Engineering</h4>
+<ol>
+<li><a href="#t1-pfleeger">Give the Pfleeger (1987) definition and its eight qualities</a></li>
+<li><a href="#t1-history">Explain why SE was established in 1968</a></li>
+<li><a href="#t1-swvsp">Differentiate Software from a Software Product</a></li>
+<li><a href="#t1-types">List the six types of Application Software with examples</a></li>
+<li><a href="#t1-sdf">Outline the five actors of the Software Development Team</a></li>
+</ol>
+
+<h4>Topic 2 — Requirement Elicitation</h4>
+<ol>
+<li><a href="#t2-def">Define Requirement Elicitation and explain its importance</a></li>
+<li><a href="#t2-ishikawa">Represent a problem using an Ishikawa diagram <em>(Related Past Question)</em></a></li>
+<li><a href="#t2-quest">Differentiate open-ended vs close-ended questionnaires</a></li>
+<li><a href="#t2-int">List the steps of carrying out a good interview</a></li>
+<li><a href="#t2-obs">Give advantages/disadvantages of observation</a></li>
+</ol>
+
+<h4>Topic 3 — Requirement Analysis</h4>
+<ol>
+<li><a href="#t3-dipm">Explain the DIPM process</a></li>
+<li><a href="#t3-func">Distinguish Functional vs Non-Functional Requirements</a></li>
+<li><a href="#t3-nonfunc">List the three types of Non-Functional Requirements</a></li>
+<li><a href="#t3-domain">What is a Domain Requirement?</a></li>
+</ol>
+
+<h4>Topic 4 — Feasibility Study</h4>
+<ol>
+<li><a href="#t4-def">Define Feasibility Study and its core question</a></li>
+<li><a href="#t4-telos">Explain the TELOS framework</a></li>
+<li><a href="#t4-telos">Mobile banking take-home exercise <em>(Related Past Question)</em></a></li>
+<li><a href="#t4-vv">Differentiate Verification vs Validation</a></li>
+<li><a href="#t4-process">List Feasibility Report contents, advantages, limitations</a></li>
+</ol>
+
+<h4>Topic 5 — Development Process &amp; Models</h4>
+<ol>
+<li><a href="#t5-process">List the four development activities / Pressman's roadmap</a></li>
+<li><a href="#t5-waterfall">Draw and explain the Classical Waterfall Model</a></li>
+<li><a href="#t5-vshape">Explain the V-Shape Model vs Waterfall</a></li>
+<li><a href="#t5-evo">Describe the lecturer's preferred Evolutionary Model (Variant III)</a></li>
+<li><a href="#t5-agile">Differentiate Evolutionary vs Agile, and justify the best</a></li>
+<li><a href="#t5-spiral">Why is Spiral preferred for security-sensitive projects?</a></li>
+</ol>
+</div>
+</section>
+
+</main>
+
+<footer>
+Built from your CSC 426 lecture notes (notebook transcript, May–June 2026) and the Requirement Elicitation, Requirement Analysis, and Feasibility Study slide decks (Dr O. O. Ajayi). Source-Material boxes preserve the lecturer's own wording; Plain-English boxes and likely exam questions are added study aids, not lecturer content, and are not guaranteed to appear in any exam.
+</footer>
+
+<button id="toTop" aria-label="Back to top">↑</button>
+
+<script>
+(function(){
+  var themeBtn = document.getElementById('themeBtn');
+  try {
+    var saved = localStorage.getItem('csc426-theme');
+    if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved);
+  } catch(e){}
+  themeBtn.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme');
+    var mqDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var effectiveDark = cur ? cur === 'dark' : mqDark;
+    var next = effectiveDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('csc426-theme', next); } catch(e){}
+  });
+
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    toTop.classList.toggle('show', window.scrollY > 500);
+  });
+  toTop.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  var search = document.getElementById('search');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.topic'));
+  var allMarks = [];
+  function clearMarks(){
+    allMarks.forEach(function(m){
+      var parent = m.parentNode;
+      parent.replaceChild(document.createTextNode(m.textContent), m);
+      parent.normalize();
+    });
+    allMarks = [];
+  }
+  function walkAndMark(node, needle){
+    if (node.nodeType === 3){
+      var text = node.textContent;
+      var lower = text.toLowerCase();
+      var idx = lower.indexOf(needle);
+      if (idx > -1){
+        var frag = document.createDocumentFragment();
+        var last = 0, i;
+        while ((i = lower.indexOf(needle, last)) > -1){
+          frag.appendChild(document.createTextNode(text.slice(last, i)));
+          var mk = document.createElement('mark');
+          mk.textContent = text.slice(i, i + needle.length);
+          frag.appendChild(mk);
+          allMarks.push(mk);
+          last = i + needle.length;
+        }
+        frag.appendChild(document.createTextNode(text.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      }
+    } else if (node.nodeType === 1 && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE'){
+      Array.prototype.slice.call(node.childNodes).forEach(function(c){ walkAndMark(c, needle); });
+    }
+  }
+  search.addEventListener('input', function(){
+    clearMarks();
+    var q = search.value.trim().toLowerCase();
+    sections.forEach(function(sec){
+      if (!q){ sec.classList.remove('hidden'); return; }
+      var text = sec.textContent.toLowerCase();
+      var match = text.indexOf(q) > -1;
+      sec.classList.toggle('hidden', !match);
+      if (match) walkAndMark(sec, q);
+    });
+  });
+})();
+</script>
+</body>
+</html>
